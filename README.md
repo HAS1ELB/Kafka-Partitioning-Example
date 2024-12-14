@@ -1,99 +1,90 @@
+# Kafka Partitioning Example
 
-# Kafka Partitioning Example Project
+Ce projet démontre l'utilisation de Kafka avec des partitions pour un traitement efficace des messages. Il comprend des exemples de producteurs, de consommateurs et d'administration Kafka écrits en Go.
 
-This project demonstrates how to implement Kafka producers and consumers in Go with partitioning, using the `sarama` library. The goal is to show how to create topics with multiple partitions, produce messages to these partitions, and consume them.
+## Structure du projet
 
-## Project Structure
+- **admin/** : Contient le script pour créer un topic Kafka avec plusieurs partitions.
+  - `create_topic.go`: Script pour créer un topic nommé "new-3partitioned-topic" avec 3 partitions.
+  - `go.mod` et `go.sum`: Fichiers de gestion des dépendances.
 
+- **producer/** : Contient le producteur Kafka qui envoie des messages aux partitions.
+  - `producer.go`: Script d'envoi de messages avec des clés spécifiques pour répartir les messages entre les partitions.
+  - `go.mod` et `go.sum`: Fichiers de gestion des dépendances.
+
+- **consumer_allp/** : Contient un consommateur Kafka qui lit les messages de toutes les partitions.
+  - `consumer.go`: Script pour consommer tous les messages depuis toutes les partitions.
+  - `go.mod` et `go.sum`: Fichiers de gestion des dépendances.
+
+- **consumer_onlyp2/** : Contient un consommateur Kafka qui lit uniquement les messages d'une partition spécifique.
+  - `consumer.go`: Script pour consommer les messages de la partition 2.
+  - `go.mod` et `go.sum`: Fichiers de gestion des dépendances.
+
+- **kafka_partitions_example.pdf** : Documentation du projet.
+
+## Prérequis
+
+1. [Kafka](https://kafka.apache.org/) doit être installé et en cours d'exécution.
+   - Un broker Kafka doit être accessible sur `localhost:9092`.
+2. [Go](https://golang.org/dl/) doit être installé (version 1.23 ou supérieure).
+
+## Installation
+
+1. Clonez le dépôt :
+   ```bash
+   git clone <url-du-repo>
+   cd kafka-partitioning-example
+   ```
+2. Installez les dépendances pour chaque sous-dossier (par exemple, `admin`, `producer`, etc.) :
+   ```bash
+   cd admin
+   go mod tidy
+   ```
+
+## Utilisation
+
+### 1. Création du topic Kafka
+
+Exécutez le script dans le dossier `admin` :
+```bash
+cd admin
+go run create_topic.go
 ```
-kafka-partitioning-example/
-├── consumer/
-│   └── consumer.go         # Code for consuming messages from Kafka partitions
-├── producer/
-│   └── producer.go         # Code for producing messages to Kafka
-├── create_topic.go         # Code to create Kafka topic with multiple partitions
-└── README.md               # This file
+Cela crée un topic nommé `new-3partitioned-topic` avec 3 partitions.
+
+### 2. Production des messages
+
+Exécutez le producteur dans le dossier `producer` :
+```bash
+cd producer
+go run producer.go
 ```
+Cela envoie des messages aux partitions en fonction des clés définies.
 
-## Requirements
+### 3. Consommation des messages
 
-- Kafka server running locally or remotely (configured in the Go code)
-- Go (v1.16 or above)
-- Sarama library for Go: `github.com/IBM/sarama`
+#### Consommation de toutes les partitions
 
-## Setup and Installation
+Exécutez le consommateur dans le dossier `consumer_allp` :
+```bash
+cd consumer_allp
+go run consumer.go
+```
+Cela lit tous les messages de toutes les partitions.
 
-1. **Install Kafka** (if not already installed):
+#### Consommation de la partition 2 uniquement
 
-   - You can install and run Kafka locally or use a remote Kafka service.
-   - Make sure Kafka is running on the default port (`localhost:9092`).
+Exécutez le consommateur dans le dossier `consumer_onlyp2` :
+```bash
+cd consumer_onlyp2
+go run consumer.go
+```
+Cela lit les messages uniquement de la partition 2.
 
-2. **Install Go and Sarama Library**:
+## Contributions
 
-   Ensure you have Go installed and then run the following command to install the Sarama library:
-   ```bash
-   go get github.com/IBM/sarama
-   ```
+Les contributions sont les bienvenues ! Veuillez soumettre une PR ou signaler des problèmes dans le suivi des issues.
 
-3. **Create the Topic**:
+## Licence
 
-   Run `create_topic.go` to create a topic with multiple partitions:
-
-   ```bash
-   go run create_topic.go
-   ```
-
-   This will create a topic called `new-3partitioned-topic` with 3 partitions.
-
-4. **Run the Producer**:
-
-   The producer sends messages to the Kafka topic, distributing them across partitions. To run the producer, use:
-
-   ```bash
-   cd producer
-   go run producer.go
-   ```
-
-5. **Run the Consumer**:
-
-   The consumer reads messages from all partitions of the topic. To run the consumer, use:
-
-   ```bash
-   cd consumer
-   go run consumer.go
-   ```
-
-   The consumer will print the messages from each partition with their offset, key, and value.
-
-## How It Works
-
-### Producer (`producer.go`):
-- The producer connects to Kafka and sends messages to a topic with multiple partitions (`new-3partitioned-topic`).
-- The messages are distributed across partitions based on a key provided in the producer code.
-
-### Consumer (`consumer.go`):
-- The consumer connects to Kafka and consumes messages from all partitions of the topic.
-- The consumer prints out the partition, offset, key, and value for each consumed message.
-
-### Topic Creation (`create_topic.go`):
-- This code creates a new Kafka topic with 3 partitions using the Sarama library's admin client.
-
-## Kafka Topics
-
-- **Topic**: `new-3partitioned-topic`
-- **Partitions**: 3
-
-## Troubleshooting
-
-- Ensure that your Kafka broker is running and accessible on `localhost:9092`.
-- If you encounter errors like "no brokers available", double-check the Kafka server settings.
-- Verify that the topic exists before running the producer or consumer.
-
-## Contributing
-
-Feel free to contribute by opening issues or submitting pull requests.
-
-## License
-
-This project is licensed under the MIT License.
-
+Ce projet est sous licence MIT. Consultez le fichier `LICENSE` pour plus d'informations.
